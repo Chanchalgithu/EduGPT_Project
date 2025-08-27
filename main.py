@@ -192,24 +192,126 @@ def login_signup():
 def main_app():
     st.set_page_config(page_title="EduGPT 🎓", layout="wide")
     
-    # Custom CSS
+    # Enhanced Custom CSS with Robotics Theme
     st.markdown("""
         <style>
             .main-header {
-                background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-                padding: 1rem;
-                border-radius: 10px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+                padding: 1.5rem;
+                border-radius: 15px;
                 margin-bottom: 2rem;
+                box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
             }
             .chat-message {
-                background: #f0f2f6;
-                padding: 1rem;
+                background: linear-gradient(145deg, #f0f2f6, #e6e9ef);
+                padding: 1.2rem;
+                border-radius: 15px;
+                margin: 0.8rem 0;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                border-left: 4px solid #667eea;
+            }
+            .chat-item {
+                background: linear-gradient(145deg, #ffffff, #f8f9fa);
+                border: 1px solid #e9ecef;
+                border-radius: 12px;
+                padding: 12px;
+                margin: 8px 0;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                transition: all 0.3s ease;
+                position: relative;
+            }
+            .chat-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+                border-color: #667eea;
+            }
+            .chat-content {
+                font-size: 14px;
+                color: #495057;
+                margin-bottom: 8px;
+                line-height: 1.4;
+            }
+            .chat-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .chat-time {
+                font-size: 11px;
+                color: #6c757d;
+            }
+            .delete-btn {
+                background: none;
+                border: none;
+                color: #dc3545;
+                cursor: pointer;
+                padding: 4px 8px;
+                border-radius: 6px;
+                font-size: 16px;
+                transition: all 0.2s ease;
+            }
+            .delete-btn:hover {
+                background-color: #dc3545;
+                color: white;
+                transform: scale(1.1);
+            }
+            .new-chat-btn {
+                background: linear-gradient(135deg, #4CAF50, #45a049) !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 12px !important;
+                padding: 12px 24px !important;
+                font-weight: 600 !important;
+                font-size: 16px !important;
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+                transition: all 0.3s ease !important;
+                width: 100% !important;
+                margin-bottom: 15px !important;
+            }
+            .new-chat-btn:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+            }
+            .delete-all-btn {
+                background: linear-gradient(135deg, #ff6b6b, #ee5a52) !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 10px !important;
+                padding: 10px 20px !important;
+                font-weight: 500 !important;
+                box-shadow: 0 3px 12px rgba(255, 107, 107, 0.3) !important;
+                transition: all 0.3s ease !important;
+                width: 100% !important;
+                margin-bottom: 15px !important;
+            }
+            .delete-all-btn:hover {
+                transform: translateY(-1px) !important;
+                box-shadow: 0 5px 16px rgba(255, 107, 107, 0.4) !important;
+            }
+            .sidebar-header {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                padding: 15px;
                 border-radius: 10px;
-                margin: 0.5rem 0;
+                margin-bottom: 20px;
+                text-align: center;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            }
+            .history-section {
+                background: #f8f9fa;
+                border-radius: 10px;
+                padding: 15px;
+                margin-bottom: 20px;
+                border: 1px solid #e9ecef;
             }
             @media (max-width: 768px) {
                 .block-container {
                     padding: 1rem !important;
+                }
+                .chat-item {
+                    padding: 10px;
                 }
             }
         </style>
@@ -223,40 +325,87 @@ def main_app():
     if today not in st.session_state.history:
         st.session_state.history[today] = []
 
-    # Sidebar
+    # Sidebar with Enhanced Design
     with st.sidebar:
-        st.header(f"👋 Welcome, {st.session_state.get('username', 'User')}")
+        # Welcome Header
+        st.markdown(f"""
+            <div class="sidebar-header">
+                <h3 style="margin: 0;">👋 Welcome</h3>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">{st.session_state.get('username', 'User')}</p>
+            </div>
+        """, unsafe_allow_html=True)
         
-        st.subheader("💬 Chat History")
-        if st.session_state.history[today]:
-            for i, chat in enumerate(st.session_state.history[today][-5:]):  # Show last 5 chats
-                with st.expander(f"Chat {i+1}", expanded=False):
-                    st.markdown(f"**Q:** {chat['q'][:50]}...")
-                    if st.button(f"🗑️ Delete", key=f"del_{i}"):
-                        st.session_state.history[today].pop(i)
-                        st.rerun()
-        else:
-            st.info("No chat history yet.")
-
-        st.divider()
-        
-        if st.button("🆕 New Chat", type="primary"):
+        # New Chat Button with Enhanced Styling
+        if st.button("🚀 New Chat", key="new_chat", help="Start a fresh conversation"):
             st.session_state.history[today] = []
             st.rerun()
 
-        if st.button("🗑️ Clear All History"):
+        # Delete All History Button
+        if st.button("🗑️ Clear All History", key="delete_all", help="Delete all chat history"):
             st.session_state.history = {today: []}
+            st.success("✅ All chat history cleared!")
             st.rerun()
 
-        if st.button("🚪 Logout"):
+        # Chat History Section
+        st.markdown("""
+            <div class="history-section">
+                <h4 style="margin-top: 0; color: #495057;">💬 Chat History</h4>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        if st.session_state.history[today]:
+            for i, chat in enumerate(st.session_state.history[today]):
+                # Create unique key for each chat item
+                chat_key = f"chat_{i}_{len(chat['q'])}"
+                
+                # Display chat item with three dots menu
+                st.markdown(f"""
+                    <div class="chat-item">
+                        <div class="chat-content">
+                            <strong>Q:</strong> {chat['q'][:60]}{'...' if len(chat['q']) > 60 else ''}
+                        </div>
+                        <div class="chat-actions">
+                            <span class="chat-time">Chat {i+1}</span>
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+                
+                # Three dots menu for individual chat deletion
+                col1, col2, col3 = st.columns([3, 1, 1])
+                with col3:
+                    if st.button("⋮", key=f"menu_{chat_key}", help="Delete this chat"):
+                        st.session_state.history[today].pop(i)
+                        st.success(f"✅ Chat {i+1} deleted!")
+                        st.rerun()
+        else:
+            st.markdown("""
+                <div style="text-align: center; padding: 20px; color: #6c757d;">
+                    <p>🤖 No conversations yet</p>
+                    <p style="font-size: 12px;">Start chatting to see history here</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+        st.divider()
+        
+        # Logout Button
+        if st.button("🚪 Logout", key="logout", help="Sign out from your account"):
             clear_session()
             st.session_state["logged_in"] = False
             if "username" in st.session_state:
                 del st.session_state["username"]
             st.rerun()
 
-    # Main content
-    st.markdown('<div class="main-header"><h1 style="color: white; text-align: center; margin: 0;">🎓 EduGPT - Your AI Tutor</h1></div>', unsafe_allow_html=True)
+    # Main content with Enhanced Header
+    st.markdown("""
+        <div class="main-header">
+            <h1 style="color: white; text-align: center; margin: 0; font-size: 2.5rem;">
+                🤖 EduGPT
+            </h1>
+            <p style="color: rgba(255,255,255,0.9); text-align: center; margin: 10px 0 0 0; font-size: 1.2rem;">
+                Your Advanced AI Educational Assistant
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
     # File upload (optional)
     uploaded_file = st.file_uploader(
@@ -282,7 +431,7 @@ def main_app():
     
     # Display recent chat history
     if st.session_state.history[today]:
-        st.subheader("Recent Conversations:")
+        st.subheader("🔄 Recent Conversations:")
         for chat in st.session_state.history[today][-3:]:  # Show last 3 conversations
             st.markdown(f'<div class="chat-message"><strong>🙋 You:</strong> {chat["q"]}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="chat-message"><strong>🤖 EduGPT:</strong> {chat["a"]}</div>', unsafe_allow_html=True)
@@ -337,3 +486,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
