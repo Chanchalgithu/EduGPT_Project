@@ -205,7 +205,7 @@ def main_app():
                 border: 1px solid rgba(255, 255, 255, 0.18);
             }
             .chat-message {
-                background: linear-gradient(145deg, #f0f2f6, #e6e9ef);
+                background: linear-gradient(145deg, #a18cd1, #fbc2eb);
                 padding: 1.2rem;
                 border-radius: 15px;
                 margin: 0.8rem 0;
@@ -486,4 +486,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
