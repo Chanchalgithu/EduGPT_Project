@@ -206,11 +206,18 @@ def main_app():
             }
             .chat-message {
                 background: linear-gradient(145deg, #3b1f5b, #6f2f8f);
+                color: #ffffff;  /* text color fix */
                 padding: 1.2rem;
                 border-radius: 15px;
                 margin: 0.8rem 0;
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                 border-left: 4px solid #667eea;
+
+                /* mobile rendering fix */
+                background-repeat: no-repeat;
+                background-attachment: fixed; /* sometimes needed for consistency */
+                -webkit-background-clip: padding-box;
+                background-clip: padding-box;
             }
             .chat-item {
                 background: linear-gradient(145deg, #ffffff, #f8f9fa);
@@ -486,6 +493,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
