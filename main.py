@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 🛡️ Secure API key loading - NO PRINTING
-API_KEY = os.getenv("OPEN_API_KEY")
+API_KEY = os.getenv("OPENAI_API_KEY")
 if not API_KEY:
     st.error("❌ OPENAI_API_KEY not found in environment variables!")
     st.stop()
